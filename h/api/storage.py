@@ -7,6 +7,9 @@ for storing and retrieving annotations. Data passed to these functions is
 assumed to be validated.
 """
 
+from pyramid.threadlocal import get_current_request
+
+from h.api.events import AnnotationTransformEvent
 from h.api.models import elastic as models
 from h.api import transform
 
@@ -139,4 +142,10 @@ def _prepare(annotation):
     # should probably not mutate its argument.
     transform.normalize_annotation_target_uris(annotation)
 
-    transform.add_nipsa(annotation)
+    # Fire an AnnotationTransformEvent so subscribers who wish to modify an
+    # annotation before save can do so.
+    #
+    # FIXME: Don't use get_current_request here.
+    request = get_current_request()
+    event = AnnotationTransformEvent(request, annotation)
+    request.registry.notify(event)

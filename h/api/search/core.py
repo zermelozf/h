@@ -1,11 +1,23 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from h.api import nipsa
 from h.api.search import query
 
 
 log = logging.getLogger(__name__)
+
+# Thread locals to hold additional filters and matchers registered by other
+# application components.
+ADDITIONAL_FILTERS = []
+ADDITIONAL_MATCHERS = []
+
+
+def register_filter(config, factory):
+    ADDITIONAL_FILTERS.append(factory)
+
+
+def register_matcher(config, factory):
+    ADDITIONAL_MATCHERS.append(factory)
 
 
 def search(request, params, private=True, separate_replies=False):
@@ -39,11 +51,13 @@ def search(request, params, private=True, separate_replies=False):
         builder = query.Builder()
         builder.append_filter(query.AuthFilter(request, private=private))
         builder.append_filter(query.UriFilter())
-        builder.append_filter(
-            lambda _: nipsa.nipsa_filter(request.authenticated_userid))
         builder.append_filter(query.GroupFilter())
         builder.append_matcher(query.AnyMatcher())
         builder.append_matcher(query.TagsMatcher())
+        for factory in ADDITIONAL_FILTERS:
+            builder.append_filter(factory(request))
+        for factory in ADDITIONAL_MATCHERS:
+            builder.append_matcher(factory(request))
         return builder
 
     builder = make_builder()

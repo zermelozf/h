@@ -4,8 +4,8 @@ from h import features
 from h.accounts import models as accounts_models
 from h.api.models.annotation import Annotation
 from h.api.models.token import Token
-from h.api.nipsa import models as nipsa_models
 from h.groups import models as groups_models
+from h.nipsa import models as nipsa_models
 from h.notification import models as notification_models
 from h.badge import models as badge_models
 

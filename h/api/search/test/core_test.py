@@ -28,7 +28,7 @@ def dummy_request():
     return DummyRequest(es=es)
 
 
-search_fixtures = pytest.mark.usefixtures('query', 'nipsa', 'log')
+search_fixtures = pytest.mark.usefixtures('query', 'log')
 
 
 @search_fixtures
@@ -147,14 +147,6 @@ def test_search_does_not_log_a_warning_if_there_are_not_too_many_replies(log):
 @pytest.fixture
 def query(request):
     patcher = mock.patch('h.api.search.core.query', autospec=True)
-    result = patcher.start()
-    request.addfinalizer(patcher.stop)
-    return result
-
-
-@pytest.fixture
-def nipsa(request):
-    patcher = mock.patch('h.api.search.core.nipsa', autospec=True)
     result = patcher.start()
     request.addfinalizer(patcher.stop)
     return result

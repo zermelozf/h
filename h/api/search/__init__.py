@@ -25,6 +25,11 @@ def includeme(config):
     settings.setdefault('es.host', 'http://localhost:9200')
     settings.setdefault('es.index', 'annotator')
 
+    config.add_directive('add_api_search_filter',
+                         'h.api.search.core.register_filter')
+    config.add_directive('add_api_search_matcher',
+                         'h.api.search.core.register_matcher')
+
     # Add a property to all requests for easy access to the elasticsearch
     # client. This can be used for direct or bulk access without having to
     # reread the settings.

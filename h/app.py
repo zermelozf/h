@@ -50,6 +50,8 @@ def create_app(global_config, **settings):
 def includeme(config):
     config.add_request_method(in_debug_mode, 'debug', reify=True)
 
+    config.include('h.api', route_prefix='/api')
+
     config.include('h.features')
 
     config.include('h.db')
@@ -74,11 +76,9 @@ def includeme(config):
     config.include('h.claim')
     config.include('h.groups')
     config.include('h.home')
+    config.include('h.nipsa')
     config.include('h.notification')
     config.include('h.queue')
-
-    config.include('h.api', route_prefix='/api')
-    config.include('h.api.nipsa')
 
 
 def get_settings(global_config, **settings):

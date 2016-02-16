@@ -137,7 +137,7 @@ setup(
         ],
         'h.worker': [
             'mailer=h.mailer:worker',
-            'nipsa=h.api.nipsa.worker:worker',
+            'nipsa=h.nipsa.worker:worker',
             'notification=h.notification.worker:run',
         ],
         'h.annotool': [
