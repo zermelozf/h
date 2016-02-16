@@ -4,15 +4,18 @@ from __future__ import unicode_literals
 import logging
 import pkg_resources
 
+from pyramid import exceptions
 from pyramid import httpexceptions
-from pyramid.view import forbidden_view_config, notfound_view_config
-from pyramid.view import view_config
 from pyramid import i18n
 from pyramid import response
+from pyramid import session
+from pyramid.view import forbidden_view_config
+from pyramid.view import notfound_view_config
+from pyramid.view import view_config
 
 from h import client
-from h import session
-from h.api.views import json_view
+from h import session as h_session
+from h.api.auth import generate_jwt
 from h.resources import Annotation
 from h.resources import Stream
 
@@ -33,7 +36,10 @@ def _handle_exc(request):
 
 def _render_app(request, extra={}):
     request.response.text = client.render_app_html(
-        api_url=request.route_url('api'),
+        # FIXME: The '' here is to ensure this has a trailing slash. These
+        # seems rather messy, and is inconsistent with the rest of the
+        # application's URLs.
+        api_url=request.resource_url(request.root, 'api', ''),
         service_url=request.route_url('index'),
         extra=extra,
         ga_tracking_id=request.registry.settings.get('ga_tracking_id'),
@@ -41,6 +47,23 @@ def _render_app(request, extra={}):
         webassets_env=request.webassets_env,
         websocket_url=request.registry.settings.get('h.websocket_url'))
     return request.response
+
+
+def json_view(**settings):
+    """A view configuration decorator with JSON defaults."""
+    settings.setdefault('accept', 'application/json')
+    settings.setdefault('renderer', 'json')
+    return view_config(**settings)
+
+
+def api_config(**settings):
+    """
+    A view configuration decorator with defaults.
+
+    JSON in and out. CORS with tokens and client id but no cookie.
+    """
+    # settings.setdefault('decorator', cors_policy)
+    return json_view(**settings)
 
 
 @view_config(context=Exception, accept='text/html',
@@ -132,8 +155,8 @@ def robots(context, request):
 
 @json_view(route_name='session', http_cache=0)
 def session_view(request):
-    flash = session.pop_flash(request)
-    model = session.model(request)
+    flash = h_session.pop_flash(request)
+    model = h_session.model(request)
     return dict(status='okay', flash=flash, model=model)
 
 
@@ -153,6 +176,26 @@ def stream(context, request):
             {'rel': 'alternate', 'href': rss, 'type': 'application/rss+xml'},
         ]
     })
+
+# This view requires credentials (a cookie) so is not currently accessible
+# off-origin, unlike the rest of the API. Given that this method of
+# authenticating to the API is not intended to remain, this seems like a
+# limitation we do not need to lift any time soon.
+@api_config(route_name='token', renderer='string')
+def annotator_token(request):
+    """Return a JWT access token for the given request.
+
+    The token can be used in the Authorization header in subsequent requests to
+    the API to authenticate the user identified by the
+    request.authenticated_userid of the _current_ request.
+
+    """
+    try:
+        session.check_csrf_token(request, token='assertion')
+    except exceptions.BadCSRFToken:
+        raise httpexceptions.HTTPUnauthorized()
+
+    return generate_jwt(request, 3600)
 
 
 @forbidden_view_config(renderer='h:templates/notfound.html.jinja2')
@@ -174,5 +217,7 @@ def includeme(config):
 
     config.add_route('session', '/app')
     config.add_route('stream', '/stream')
+
+    config.add_route('token', '/api/token')
 
     config.scan(__name__)
