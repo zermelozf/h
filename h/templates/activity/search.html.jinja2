@@ -36,11 +36,11 @@
   A collapsible bucket/group of annotations
 #}
 {% macro search_result_bucket(bucket) %}
-<ol class="search-result__details">
-  <li class="search-result__domain search-result-bucket">
+<div class="search-result__details">
+  <div class="search-result__domain search-result-bucket">
     {{ bucket.domain }}
-  </li>
-  <li class="search-result__title search-result-bucket">
+  </div>
+  <div class="search-result__title search-result-bucket">
     {{ bucket.title }}
     <div class="search-result__annotation-cards-info">
       <ol class="search-result__annotation-cards">
@@ -50,13 +50,13 @@
       </ol>
       {{ bucket_stats(bucket) }}
     </div>
-  </li>
-  <li class="search-result__annotations-count search-result-bucket">
+  </div>
+  <div class="search-result__annotations-count search-result-bucket">
     <div class="search-result__annotations-count-container">
       {{ bucket.annotations_count }}
     </div>
-  </li>
-</ol>
+  </div>
+</div>
 {% endmacro %}
 
 {% block content %}

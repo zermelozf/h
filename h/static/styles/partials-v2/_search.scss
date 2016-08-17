@@ -20,10 +20,8 @@
 }
 
 .search-result__details {
-  list-style: none;
   display: flex;
   flex-direction: row;
-  padding-left: 0px;
   background-color: $grey-2;
 
   &:hover {
