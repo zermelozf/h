@@ -43,7 +43,7 @@
   <div class="search-result-bucket__title">
     {{ bucket.title }}
     <div class="search-result-bucket__annotation-cards-info">
-      <ol class="search-result__annotation-cards">
+      <ol class="search-result-bucket__annotation-cards">
         {% for result in bucket.annotations %}
           {{ annotation_card(result.annotation, request) }}
         {% endfor %}

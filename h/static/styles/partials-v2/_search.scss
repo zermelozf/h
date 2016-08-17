@@ -76,8 +76,9 @@
 }
 
 .search-result-bucket__annotation-cards {
-  width: 500px;
-  margin-left: -38px;
+  max-width: 500px;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 // Card displaying stats about a group of annotations in search results
