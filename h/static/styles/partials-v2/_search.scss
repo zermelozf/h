@@ -10,8 +10,17 @@
 }
 
 .search-result-list {
-  list-style: none;
   max-width: 950px;
+
+  // Remove default padding from <ol>
+  list-style: none;
+  padding-left: 0;
+  padding-right: 0;
+
+  // These margins are set so that the left edge of the search result list
+  // aligns with the left edge of the navbar content
+  margin-left: 30px;
+  margin-right: 30px;
 }
 
 .search-result__timeframe {
@@ -88,11 +97,13 @@
   margin-bottom: 20px;
 }
 
-@media screen and (max-width: $max-phone-width) {
+@media screen and (max-width: $tablet-width) {
+
+  // Reduce margins on tablet and below to match navbar left/right margins
+  // on these screen sizes
   .search-result-list {
-    margin-left: -25px;
-    margin-right: 12px;
-    max-width: 415px;
+    margin-left: 10px;
+    margin-right: 10px;
   }
 
   .search-result-bucket {
