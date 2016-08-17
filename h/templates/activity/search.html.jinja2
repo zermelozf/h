@@ -3,28 +3,28 @@
 {% from '../includes/annotation_card.html.jinja2' import annotation_card %}
 
 {# Card displaying statistics about a bucket of annotations. #}
-{% macro bucket_stats(bucket) %}
-<div class="search-result__annotation-metadata">
-  <div class="search-result__metadata-key">
+{% macro search_bucket_stats(bucket) %}
+<div class="search-bucket-stats">
+  <div class="search-bucket-stats__key">
     Address
   </div>
-  <div class="search-result__metadata-val">
+  <div class="search-bucket-stats__val">
     {{ bucket.uri }}
   </div>
   {% if bucket.tags %}
-    <div class="search-result__metadata-key">
+    <div class="search-bucket-stats__key">
       Tags
     </div>
-    <ul class="search-result__metadata-val">
+    <ul class="search-bucket-stats__val">
       {% for tag in bucket.tags %}
         <li>{{ tag }}</li>
       {% endfor %}
     </ul>
   {% endif %}
-  <div class="search-result__metadata-key">
+  <div class="search-bucket-stats__key">
     Annotators
   </div>
-  <ul class="search-result__metadata-val">
+  <ul class="search-bucket-stats__val">
     {% for user in bucket.users %}
       <li>{{ user.split(':')[1] }}</li>
     {% endfor %}
@@ -36,23 +36,23 @@
   A collapsible bucket/group of annotations
 #}
 {% macro search_result_bucket(bucket) %}
-<div class="search-result__details">
-  <div class="search-result__domain search-result-bucket">
+<div class="search-result-bucket">
+  <div class="search-result-bucket__domain">
     {{ bucket.domain }}
   </div>
-  <div class="search-result__title search-result-bucket">
+  <div class="search-result-bucket__title">
     {{ bucket.title }}
-    <div class="search-result__annotation-cards-info">
+    <div class="search-result-bucket__annotation-cards-info">
       <ol class="search-result__annotation-cards">
         {% for result in bucket.annotations %}
           {{ annotation_card(result.annotation, request) }}
         {% endfor %}
       </ol>
-      {{ bucket_stats(bucket) }}
+      {{ search_bucket_stats(bucket) }}
     </div>
   </div>
-  <div class="search-result__annotations-count search-result-bucket">
-    <div class="search-result__annotations-count-container">
+  <div class="search-result-bucket__annotations-count">
+    <div class="search-result-bucket__annotations-count-container">
       {{ bucket.annotations_count }}
     </div>
   </div>
