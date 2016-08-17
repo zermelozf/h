@@ -40,20 +40,22 @@
   <div class="search-result-bucket__domain">
     {{ bucket.domain }}
   </div>
-  <div class="search-result-bucket__title">
-    {{ bucket.title }}
-    <div class="search-result-bucket__annotation-cards-info">
+  <div class="search-result-bucket__content">
+    <div class="search-result-bucket__header">
+      <div class="search-result-bucket__title">{{ bucket.title }}</div>
+      <div class="search-result-bucket__annotations-count">
+        <div class="search-result-bucket__annotations-count-container">
+          {{ bucket.annotations_count }}
+        </div>
+      </div>
+    </div>
+    <div class="search-result-bucket__annotation-cards-container">
       <ol class="search-result-bucket__annotation-cards">
         {% for result in bucket.annotations %}
           {{ annotation_card(result.annotation, request) }}
         {% endfor %}
       </ol>
       {{ search_bucket_stats(bucket) }}
-    </div>
-  </div>
-  <div class="search-result-bucket__annotations-count">
-    <div class="search-result-bucket__annotations-count-container">
-      {{ bucket.annotations_count }}
     </div>
   </div>
 </div>
