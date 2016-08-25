@@ -4,6 +4,11 @@ var Controller = require('../base/controller');
 var { setElementState } = require('../util/dom');
 var submitForm = require('../util/submit-form');
 
+function shouldAutosubmit(type) {
+  var autosubmitTypes = ['checkbox', 'radio'];
+  return autosubmitTypes.indexOf(type) !== -1;
+}
+
 /**
  * A controller which adds inline editing functionality to forms
  */
@@ -34,8 +39,11 @@ class FormController extends Controller {
       });
     });
 
-    this.on('form-input:input', () => {
+    this.on('form-input:input', event => {
       this.setState({dirty: true});
+      if (shouldAutosubmit(event.data.type)) {
+        this.submit();
+      }
     });
 
     this.on('keydown', event => {
@@ -108,7 +116,7 @@ class FormController extends Controller {
     var isEditing = !!state.editingField;
     setElementState(this.element, {editing: isEditing});
     setElementState(this.refs.formActions, {
-      hidden: !isEditing,
+      hidden: !isEditing || shouldAutosubmit(state.editingField.type()),
       saving: state.saving,
     });
     setElementState(this.refs.formSubmitError, {

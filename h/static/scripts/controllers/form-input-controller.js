@@ -13,8 +13,20 @@ class FormInputController extends Controller {
     this.refs.formInput.addEventListener('focus', () => {
       this.trigger('form-input:focus');
     });
-    this.refs.formInput.addEventListener('input', () => {
-      this.trigger('form-input:input');
+
+    var inputType = this.refs.formInput.type;
+
+    this.on('change', () => {
+      this.trigger('form-input:input', {type: inputType});
+    });
+
+    this.on('input', () => {
+      // Some but not all browsers deliver an `input` event for checkboxes. Ignore
+      // these and just emit when the `change` event occurs.
+      if (inputType === 'checkbox' || inputType === 'radio') {
+        return;
+      }
+      this.trigger('form-input:input', {type: inputType});
     });
   }
 
@@ -24,6 +36,10 @@ class FormInputController extends Controller {
 
   focus() {
     this.refs.formInput.focus();
+  }
+
+  type() {
+    return this.refs.formInput.type;
   }
 }
 
