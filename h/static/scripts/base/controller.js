@@ -25,6 +25,11 @@ function findRefs(el) {
 }
 
 /**
+ * @typedef {Object} ControllerOptions
+ * @property {EnvironmentFlags} [envFlags]
+ */
+
+/**
  * Base class for controllers that upgrade elements with additional
  * functionality.
  *
@@ -44,8 +49,9 @@ class Controller {
    * Initialize the controller.
    *
    * @param {Element} element - The DOM Element to upgrade
+   * @param {ControllerOptions} [options]
    */
-  constructor(element) {
+  constructor(element, options = {}) {
     if (!element.controllers) {
       element.controllers = [this];
     } else {
@@ -54,6 +60,7 @@ class Controller {
 
     this.state = {};
     this.element = element;
+    this.options = options;
     this.refs = findRefs(element);
   }
 

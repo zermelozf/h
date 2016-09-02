@@ -15,4 +15,19 @@ describe('upgradeElements', function () {
 
     root.remove();
   });
+
+  it('passes environment flags to controller', function () {
+    var TestController = sinon.spy();
+    var fakeEnvFlags = {};
+    var root = document.createElement('div');
+    root.innerHTML = '<div class="js-test"></div>';
+
+    upgradeElements(root, {'.js-test': TestController}, {
+      envFlags: fakeEnvFlags,
+    });
+
+    assert.calledWithMatch(TestController, root.children[0], sinon.match({
+      envFlags: fakeEnvFlags,
+    }));
+  });
 });

@@ -6,21 +6,28 @@ var Controller = require('../base/controller');
 var setElementState = require('../util/dom').setElementState;
 
 class SearchBucketController extends Controller {
-  constructor(element) {
-    super(element);
+  constructor(element, options) {
+    super(element, options);
 
-    this.scrollTo = scrollIntoView;
+    this.scrollTo = this.options.scrollTo || scrollIntoView;
 
     this.refs.header.addEventListener('click', () => {
       this.setState({expanded: !this.state.expanded});
     });
+
+    var timeout = this.options.envFlags && this.options.envFlags.get('timeout');
+
+    this.setState({
+      expanded: !!timeout,
+    });
   }
 
-  update(state) {
-    setElementState(this.refs.content, {expanded: state.expanded});
-    setElementState(this.refs.header, {expanded: state.expanded});
+  update(state, prevState) {
+    setElementState(this.refs.content, {hidden: !state.expanded});
+    setElementState(this.element, {expanded: state.expanded});
 
-    if (state.expanded) {
+    // Scroll to element when expanded, except on initial load
+    if (typeof prevState.expanded !== 'undefined' && state.expanded) {
       this.scrollTo(this.element);
     }
   }
